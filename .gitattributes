@@ -1,0 +1,21 @@
+# Preserve executable bit on gradlew across all platforms
+android/gradlew text eol=lf
+android/gradlew linguist-language=Shell
+
+# Line endings
+*.sh text eol=lf
+*.bat text eol=crlf
+*.gradle text eol=lf
+*.java text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.md text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.keystore binary
+*.jks binary
+*.jar binary

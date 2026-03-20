@@ -41,8 +41,6 @@ jobs:
         run: yarn install --non-interactive --prefer-offline
 
       # ── 5. Android SDK ─────────────────────────────────────────
-      # ubuntu-latest already has Android SDK at $ANDROID_SDK_ROOT.
-      # We just need to accept licenses and install the exact components.
       - name: Accept SDK licenses & install components
         run: |
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
@@ -59,7 +57,12 @@ jobs:
             "https://github.com/gradle/gradle/raw/v8.6.0/gradle/wrapper/gradle-wrapper.jar" \
             -o android/gradle/wrapper/gradle-wrapper.jar
 
-      # ── 7. Gradle cache ────────────────────────────────────────
+      # ── 7. Make gradlew executable ─────────────────────────────
+      # gradlew is committed to the repo — just set the exec bit
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      # ── 8. Gradle cache ────────────────────────────────────────
       - name: Cache Gradle
         uses: actions/cache@v4
         with:
@@ -69,7 +72,7 @@ jobs:
           key: gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: gradle-
 
-      # ── 8. JS bundle ───────────────────────────────────────────
+      # ── 9. JS bundle ───────────────────────────────────────────
       - name: Create assets directory
         run: mkdir -p android/app/src/main/assets
 
@@ -83,7 +86,7 @@ jobs:
             --assets-dest android/app/src/main/res \
             --reset-cache
 
-      # ── 9. Debug keystore ──────────────────────────────────────
+      # ── 10. Debug keystore ─────────────────────────────────────
       - name: Generate debug keystore
         run: |
           keytool -genkeypair -v \
@@ -93,7 +96,7 @@ jobs:
             -storepass android -keypass android \
             -dname "CN=Ghost Debug, O=Ghost, C=SG" 2>/dev/null || true
 
-      # ── 10. Release keystore (tag builds only) ─────────────────
+      # ── 11. Release keystore (tag builds only) ─────────────────
       - name: Decode release keystore
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
@@ -102,25 +105,18 @@ jobs:
           printf "storeFile=ghost-release.keystore\nstorePassword=${{ secrets.STORE_PASSWORD }}\nkeyAlias=${{ secrets.KEY_ALIAS }}\nkeyPassword=${{ secrets.KEY_PASSWORD }}\n" \
             > android/keystore.properties
 
-      # ── 11. Build ──────────────────────────────────────────────
-      - name: Make gradlew executable
-        run: chmod +x android/gradlew
-
+      # ── 12. Build ──────────────────────────────────────────────
       - name: Build Debug APK
         if: "!startsWith(github.ref, 'refs/tags/v')"
         working-directory: android
-        env:
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
-        run: ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Build Release APK
         if: startsWith(github.ref, 'refs/tags/v')
         working-directory: android
-        env:
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
-        run: ./gradlew assembleRelease --no-daemon --stacktrace 2>&1
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
 
-      # ── 12. Upload artifacts ───────────────────────────────────
+      # ── 13. Upload artifacts ───────────────────────────────────
       - name: Upload Debug APK
         if: "!startsWith(github.ref, 'refs/tags/v')"
         uses: actions/upload-artifact@v4
@@ -137,7 +133,7 @@ jobs:
           path: android/app/build/outputs/apk/release/app-release.apk
           retention-days: 90
 
-      # ── 13. GitHub Release (on tag) ────────────────────────────
+      # ── 14. GitHub Release (on tag) ────────────────────────────
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
