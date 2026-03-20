@@ -14,7 +14,7 @@ react {
 
 android {
     ndkVersion        = rootProject.ext.ndkVersion
-    compileSdk        = rootProject.ext.compileSdkVersion
+    compileSdk = rootProject.ext.compileSdkVersion
     buildToolsVersion = rootProject.ext.buildToolsVersion
     namespace         = "com.ghost"
 
