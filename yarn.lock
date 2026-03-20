@@ -1250,10 +1250,10 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-documents/picker@^10.1.7":
-  version "10.1.7"
-  resolved "https://registry.yarnpkg.com/@react-native-documents/picker/-/picker-10.1.7.tgz#3c2890d89d5c76f375cb94149e90d07128324012"
-  integrity sha512-Tb8SPU+pHxrSJmDHBozSUStIPeyFHTHLrU3MW0N3sUAioLd5z+nmUdypfg5fs+Yzp7KTxVW06APe2HLB1ysLww==
+"@react-native-documents/picker@^9.3.1":
+  version "9.3.1"
+  resolved "https://registry.yarnpkg.com/@react-native-documents/picker/-/picker-9.3.1.tgz#d767f52109c2522588aecb90c5c14a73833e3407"
+  integrity sha512-KdyZNxK7UbjdFNIDK/ekbaf0uyESoS7zjt0qerf55Q/U4jqwIyEYuwplFUoXvmprwFEX8RJ4tBD2T2L+tZ2inA==
 
 "@react-native/assets-registry@0.73.1":
   version "0.73.1"
@@ -5547,7 +5547,7 @@ react-native-shake@6.8.3:
   resolved "https://registry.yarnpkg.com/react-native-shake/-/react-native-shake-6.8.3.tgz#88fd5cc754b5389fe928592384ab14e9f5060e58"
   integrity sha512-njuKl6aWtEZ7TWgRIpqnEVPfyUykA0BAy6qPDnz4mFJ6gpoNDZdSuSl9MFpQCpZHOkHBaLh5fB4q6vKpH/RtNw==
 
-react-native-svg@^15.2.0:
+react-native-svg@^15.8.0:
   version "15.15.4"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.15.4.tgz#c029be85c20ead09c63dffa6b1ade06012f095ed"
   integrity sha512-boT/vIRgj6zZKBpfTPJJiYWMbZE9duBMOwPK6kCSTgxsS947IFMOq9OgIFkpWZTB7t229H24pDRkh3W9ZK/J1A==
