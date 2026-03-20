@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        buildToolsVersion  = "34.0.0"
+        buildToolsVersion  = "35.0.0"
         minSdkVersion      = 24
         compileSdkVersion  = 35
         targetSdkVersion   = 35
@@ -19,5 +19,16 @@ allprojects {
         google(); mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url("$rootDir/../node_modules/react-native/android") }
+    }
+}
+
+// Force androidx.core to a version that doesn't require SDK 35
+// This prevents react-native-video from pulling in incompatible versions
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            force "androidx.core:core:1.13.1"
+            force "androidx.core:core-ktx:1.13.1"
+        }
     }
 }
