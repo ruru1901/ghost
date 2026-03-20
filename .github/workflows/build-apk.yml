@@ -54,7 +54,7 @@ jobs:
         run: |
           mkdir -p android/gradle/wrapper
           curl -sSfL \
-            "https://github.com/gradle/gradle/raw/v8.6.0/gradle/wrapper/gradle-wrapper.jar" \
+            "https://github.com/gradle/gradle/raw/v8.7.0/gradle/wrapper/gradle-wrapper.jar" \
             -o android/gradle/wrapper/gradle-wrapper.jar
 
       # ── 7. Make gradlew executable ─────────────────────────────
