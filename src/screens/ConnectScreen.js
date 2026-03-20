@@ -15,7 +15,7 @@ import {
   Linking,
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import {RNCamera} from 'react-native-camera';
+import {Camera, CameraType} from 'react-native-camera-kit';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 

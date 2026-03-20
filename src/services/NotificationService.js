@@ -1,87 +1,52 @@
-/**
- * Ghost – Local Notification Service
- * No push server. Notifications fired locally when a message
- * arrives while the app is in the background.
- * Uses react-native-push-notification (local only, no FCM).
- */
-import PushNotification from 'react-native-push-notification';
-import {AppState, Platform} from 'react-native';
+import notifee, {AndroidImportance} from '@notifee/react-native';
+import {AppState} from 'react-native';
 import {MMKV} from 'react-native-mmkv';
 
 const prefs = new MMKV({id: 'ghost_notif_prefs'});
+const CHANNEL_ID = 'ghost_messages';
 
-// ── Setup ────────────────────────────────────────────────────────
-
-export function setupNotifications(onNotificationTap) {
-  PushNotification.configure({
-    onNotification(notification) {
-      if (notification.userInteraction) {
-        // User tapped notification → open that chat
-        const peerId = notification.data?.peerId;
-        if (peerId && onNotificationTap) onNotificationTap(peerId);
-      }
-    },
-    permissions: {alert: true, badge: true, sound: true},
-    popInitialNotification: true,
-    requestPermissions: Platform.OS === 'ios',
+export async function setupNotifications(onNotificationTap) {
+  await notifee.createChannel({
+    id: CHANNEL_ID,
+    name: 'Ghost Messages',
+    importance: AndroidImportance.HIGH,
+    vibration: true,
   });
-
-  PushNotification.createChannel(
-    {
-      channelId:          'ghost_messages',
-      channelName:        'Ghost Messages',
-      channelDescription: 'Incoming Ghost messages',
-      importance:         4, // HIGH
-      vibrate:            true,
-      soundName:          'default',
-    },
-    () => {},
-  );
+  notifee.onForegroundEvent(({type, detail}) => {
+    if (type === 1 && detail.notification?.data?.peerId) {
+      onNotificationTap?.(detail.notification.data.peerId);
+    }
+  });
+  notifee.onBackgroundEvent(async ({type, detail}) => {
+    if (type === 1 && detail.notification?.data?.peerId) {
+      onNotificationTap?.(detail.notification.data.peerId);
+    }
+  });
 }
 
-// ── Fire a notification ───────────────────────────────────────────
-
-export function notifyMessage(peerId, nickname, preview) {
-  // Only notify when app is in background
+export async function notifyMessage(peerId, nickname, preview) {
   if (AppState.currentState === 'active') return;
-
-  // Check user prefs
   if (prefs.getBoolean('disabled') === true) return;
-
-  const showPreview = prefs.getBoolean('showPreview') !== false; // default true
-
-  PushNotification.localNotification({
-    channelId:   'ghost_messages',
-    title:       nickname ?? `${peerId.slice(0, 10)}…`,
-    message:     showPreview ? preview : 'New message',
-    playSound:   true,
-    soundName:   'default',
-    vibrate:     true,
-    vibration:   300,
-    userInfo:    {peerId},
-    // No badge count — Ghost doesn't track read state on server
-    number:      0,
+  const showPreview = prefs.getBoolean('showPreview') !== false;
+  await notifee.displayNotification({
+    title: nickname ?? `${peerId.slice(0, 10)}…`,
+    body: showPreview ? preview : 'New message',
+    data: {peerId},
+    android: {channelId: CHANNEL_ID, importance: AndroidImportance.HIGH, smallIcon: 'ic_launcher', pressAction: {id: 'default'}},
   });
 }
 
-export function notifyCall(peerId, nickname) {
+export async function notifyCall(peerId, nickname) {
   if (AppState.currentState === 'active') return;
-
-  PushNotification.localNotification({
-    channelId: 'ghost_messages',
-    title:     'Incoming Ghost call',
-    message:   `${nickname ?? peerId.slice(0, 10) + '…'} is calling`,
-    playSound: true,
-    soundName: 'default',
-    vibrate:   true,
-    ongoing:   false,
-    userInfo:  {peerId, type: 'call'},
+  await notifee.displayNotification({
+    title: 'Incoming Ghost call',
+    body: `${nickname ?? peerId.slice(0, 10) + '…'} is calling`,
+    data: {peerId, type: 'call'},
+    android: {channelId: CHANNEL_ID, importance: AndroidImportance.HIGH, smallIcon: 'ic_launcher', pressAction: {id: 'default'}},
   });
 }
-
-// ── Prefs ─────────────────────────────────────────────────────────
 
 export function setNotificationsEnabled(v) { prefs.set('disabled', !v); }
-export function setShowPreview(v)           { prefs.set('showPreview', v); }
-export function areNotificationsEnabled()   { return prefs.getBoolean('disabled') !== true; }
-export function isPreviewEnabled()          { return prefs.getBoolean('showPreview') !== false; }
+export function setShowPreview(v) { prefs.set('showPreview', v); }
+export function areNotificationsEnabled() { return prefs.getBoolean('disabled') !== true; }
+export function isPreviewEnabled() { return prefs.getBoolean('showPreview') !== false; }
