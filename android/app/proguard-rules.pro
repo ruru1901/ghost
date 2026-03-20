@@ -1,0 +1,10 @@
+-keep class com.facebook.react.** { *; }
+-keep class com.facebook.hermes.** { *; }
+-keep class com.facebook.jni.**   { *; }
+-keep class com.ghost.**          { *; }
+-keep class com.oney.WebRTCModule.** { *; }
+-keep class com.tencent.mmkv.**  { *; }
+-keep class com.oblador.encryptedstorage.** { *; }
+-dontwarn com.facebook.**
+-dontwarn org.webrtc.**
+-keepattributes Signature,*Annotation*,EnclosingMethod,InnerClasses

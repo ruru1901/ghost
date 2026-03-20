@@ -1,0 +1,37 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# React Native
+.bundle/
+*.jsbundle
+
+# Android build output
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/app/src/main/assets/index.android.bundle
+# Keep res/mipmap icons but ignore generated drawable duplicates
+android/app/src/main/res/drawable-*
+
+# NEVER commit secrets
+android/app/ghost-release.keystore
+android/app/*.keystore
+android/keystore.properties
+*.keystore
+*.jks
+
+# Gradle wrapper jar (downloaded by CI)
+android/gradle/wrapper/gradle-wrapper.jar
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Env
+.env
+.env.*
